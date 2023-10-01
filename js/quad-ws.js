@@ -42,8 +42,8 @@ function ws_open(ptr, len) {
     conn.socket.onopen = (s, e) => {
         conn.state = WS_CONNECTED;
     };
-    conn.socket.onmessage = (s, e) => {
-        conn.received.push(new Uint8Array(e.data.arraybuffer()));
+    conn.socket.onmessage = (e) => {
+        conn.received.push(new Uint8Array(e.data.arrayBuffer()));
     };
     conn.socket.onerror = (s, e) => {
         conn.state = WS_CLOSED;
@@ -102,17 +102,3 @@ function register_plugin(importObject) {
 }
 
 miniquad_add_plugin({ register_plugin, version: "0.0.1", name: "miniquad_websocket" });
-
-/*
-var socket = new WebSocket("ws://127.0.0.1:7878");
-            socket.onmessage = function (event) {
-                var received = document.getElementById("received");
-                var br = document.createElement("BR");
-                console.log(event.data);
-            };
-        	
-            function send(data) {
-            	
-                socket.send(data);
-            }
-*/
