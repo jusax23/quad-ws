@@ -21,8 +21,8 @@ let ws = {};
 let i = 0;
 
 const WS_NOT_EXISTING = -1;
-const WS_CREATING = 0;
-const WS_OPEN = 1;
+const WS_DISCONNECTED = 0;
+const WS_CONNECTED = 1;
 const WS_CLOSED = 2;
 
 function ws_open(ptr, len) {
@@ -32,15 +32,15 @@ function ws_open(ptr, len) {
     try {
         conn = {
             socket: new WebSocket(url),
-            state: 0,
+            state: WS_DISCONNECTED,
             received: []
         };
     } catch (error) {
         return -1;
     }
-    
+
     conn.socket.onopen = (s, e) => {
-        conn.state = WS_OPEN;
+        conn.state = WS_CONNECTED;
     };
     conn.socket.onmessage = (s, e) => {
         conn.received.push(new Uint8Array(e.data.arraybuffer()));
@@ -63,7 +63,7 @@ function ws_write(id, ptr, len) {
     for (let i = 0; i < len; i++) {
         data[i] = data_in[i];
     }*/
-    if (ws[id] != null) {
+    if (ws[id] != null && ws[id].socket.readyState == WebSocket.OPEN) {
         ws[id].socket.send(data);
         return true;
     }

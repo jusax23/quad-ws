@@ -11,32 +11,37 @@ extern "C" {
     fn ws_close(id: WsChannnel);
 }
 
-pub fn ws_open_rust(url: String) -> Result<WsChannnel, _> {
+pub fn ws_open_rust(url: String) -> Option<WsChannnel> {
     let url = CString::new(url).unwrap();
     let socket_id = unsafe { ws_open(url.as_ptr(), url.as_bytes().len() as u32) };
     if socket_id < 0 {
-        Err(())
+        None
     } else {
-        Ok(socket_id)
+        Some(socket_id)
     }
 }
 
-pub fn ws_write_rust(socket: WsChannnel, data: Vec<u8>) -> bool {
+pub fn ws_write_rust(socket: &mut WsChannnel, data: Vec<u8>) -> bool {
     let buf = data.as_slice();
-    let succ = unsafe { ws_write(socket, buf.as_ptr(), buf.len() as u32) };
+    let succ = unsafe { ws_write(*socket, buf.as_ptr(), buf.len() as u32) };
     succ
 }
 
-pub fn ws_read_rust(socket: WsChannnel) -> Option<Vec<u8>> {
-    let available = unsafe { ws_available(socket) };
+pub fn ws_read_rust(socket: &mut WsChannnel) -> Option<Vec<u8>> {
+    let available = unsafe { ws_available(*socket) };
     if available < 0 {
         return None;
     }
     let mut buffer = vec![0; available as usize];
-    unsafe { ws_read(socket, buffer.as_mut_ptr(), available as u32) };
+    unsafe { ws_read(*socket, buffer.as_mut_ptr(), available as u32) };
     return Some(buffer);
 }
 
-pub fn ws_close_rust(socket: WsChannnel) {
-    unsafe { ws_close(socket) };
+pub fn ws_close_rust(socket: &mut WsChannnel) {
+    unsafe { ws_close(*socket) };
+}
+
+pub fn ws_state_rust(socket: &mut WsChannnel) -> i32{
+    let state = unsafe { ws_state(*socket) };
+    return state;
 }

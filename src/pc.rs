@@ -103,14 +103,30 @@ pub fn ws_read_rust(socket: &mut WsChannnel) -> Option<Vec<u8>> {
     return None;
 }
 
-pub fn ws_close_rust(socket: &WsChannnel) {
+pub fn ws_close_rust(socket: &mut WsChannnel) {
     match &socket.client {
         WsClient::None => {}
         WsClient::Insecure(client) => {
             client.shutdown().unwrap();
+            socket.client = WsClient::None;
         }
         WsClient::Secure(client) => {
             client.shutdown().unwrap();
+            socket.client = WsClient::None;
+        }
+    }
+}
+
+pub fn ws_state_rust(socket: &mut WsChannnel) -> i32{
+    match &socket.client {
+        WsClient::None => {
+            2
+        }
+        WsClient::Insecure(_) => {
+            1
+        }
+        WsClient::Secure(_) => {
+            1
         }
     }
 }
