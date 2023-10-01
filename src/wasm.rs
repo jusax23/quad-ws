@@ -32,8 +32,8 @@ pub fn ws_read_rust(socket: &mut WsChannnel) -> Option<Vec<u8>> {
     if available < 0 {
         return None;
     }
-    let mut buffer = vec![0; available as usize];
-    unsafe { ws_read(*socket, buffer.as_mut_ptr(), available as u32) };
+    let buffer = vec![0; available as usize];
+    unsafe { ws_read(*socket, buffer.as_ptr(), available as u32) };
     return Some(buffer);
 }
 

@@ -24,8 +24,8 @@ impl QuadWs {
             channel: ws_open_rust(url).unwrap(),
         }
     }
-    pub fn write(&mut self) -> bool {
-        ws_write_rust(&mut self.channel, vec![])
+    pub fn write(&mut self, data: Vec<u8>) -> bool {
+        ws_write_rust(&mut self.channel, data)
     }
     pub fn close(&mut self) {
         ws_close_rust(&mut self.channel)

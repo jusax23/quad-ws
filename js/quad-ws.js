@@ -70,7 +70,7 @@ function ws_write(id, ptr, len) {
     return false;
 }
 function ws_available(id) {
-    if (ws[id].received.length == 0) return -1;
+    if (ws[id] != null || ws[id].received.length == 0) return -1;
     return ws[id].received[0].length;
 }
 
