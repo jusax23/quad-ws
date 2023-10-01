@@ -1,0 +1,9 @@
+[package]
+name = "quad-ws"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+websocket = "0.27.0"
