@@ -10,7 +10,6 @@ use pc::*;
 
 #[repr(i32)]
 pub enum QuadWsState {
-    WsNotExisting = -1,
     WsDisconnected = 0,
     WsConnected = 1,
     WsClosed = 2,
@@ -21,7 +20,7 @@ pub struct QuadWs {
 impl QuadWs {
     pub fn new(url: String) -> Self {
         Self {
-            channel: ws_open_rust(url).unwrap(),
+            channel: ws_open_rust(url).unwrap()
         }
     }
     pub fn write(&mut self, data: Vec<u8>) -> bool {
@@ -38,6 +37,9 @@ impl QuadWs {
             return true;
         }
         false
+    }
+    pub fn revive(&mut self){
+        ws_revive_rust(&mut self.channel);
     }
     pub fn state(&mut self) -> QuadWsState {
         let state = ws_state_rust(&mut self.channel);

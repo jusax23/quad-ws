@@ -4,6 +4,7 @@ pub type WsChannnel = i32;
 
 extern "C" {
     fn ws_open(ptr: *const i8, len: u32) -> WsChannnel;
+    fn ws_revive(id: WsChannnel) -> bool;
     fn ws_write(id: WsChannnel, ptr: *const u8, len: u32) -> bool;
     fn ws_read(id: WsChannnel, ptr: *const u8, len: u32);
     fn ws_available(id: WsChannnel) -> i32;
@@ -19,6 +20,10 @@ pub fn ws_open_rust(url: String) -> Option<WsChannnel> {
     } else {
         Some(socket_id)
     }
+}
+
+pub fn ws_revive_rust(socket: &mut WsChannnel) -> bool {
+    return unsafe { ws_revive(*socket) };
 }
 
 pub fn ws_write_rust(socket: &mut WsChannnel, data: Vec<u8>) -> bool {
@@ -41,7 +46,7 @@ pub fn ws_close_rust(socket: &mut WsChannnel) {
     unsafe { ws_close(*socket) };
 }
 
-pub fn ws_state_rust(socket: &mut WsChannnel) -> i32{
+pub fn ws_state_rust(socket: &mut WsChannnel) -> i32 {
     let state = unsafe { ws_state(*socket) };
     return state;
 }
