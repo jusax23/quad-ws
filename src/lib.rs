@@ -18,10 +18,14 @@ pub struct QuadWs {
     channel: WsChannnel,
 }
 impl QuadWs {
-    pub fn new(url: String) -> Self {
-        Self {
-            channel: ws_open_rust(url).unwrap()
+    pub fn new(url: String) -> Option<Self> {
+        let conn = ws_open_rust(url);
+        if conn.is_none() {
+            return None;
         }
+        Some(Self {
+            channel: conn.unwrap(),
+        })
     }
     pub fn write(&mut self, data: Vec<u8>) -> bool {
         ws_write_rust(&mut self.channel, data)
@@ -33,12 +37,12 @@ impl QuadWs {
         ws_read_rust(&mut self.channel)
     }
     pub fn connected(&mut self) -> bool {
-        if let QuadWsState::WsConnected = self.state(){
+        if let QuadWsState::WsConnected = self.state() {
             return true;
         }
         false
     }
-    pub fn revive(&mut self){
+    pub fn revive(&mut self) {
         ws_revive_rust(&mut self.channel);
     }
     pub fn state(&mut self) -> QuadWsState {
