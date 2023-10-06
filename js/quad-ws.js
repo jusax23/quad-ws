@@ -42,7 +42,9 @@ function ws_open_js(url, id) {
         conn.state = WS_CONNECTED;
     };
     conn.socket.onmessage = (e) => {
-        conn.received.push(new Uint8Array(e.data.arrayBuffer()));
+        e.data.arrayBuffer().then((d) => {
+            conn.received.push(new Uint8Array(d));
+        });
     };
     conn.socket.onerror = (s, e) => {
         conn.state = WS_DISCONNECTED;
